@@ -15,6 +15,10 @@ class User
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+        if(Auth::user()->role_id==2){
+            return $next($request);    
+        } else{
+            return redirect('/login');
+        }
     }
 }
