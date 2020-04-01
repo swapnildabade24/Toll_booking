@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\User;
+use App\Http\Middleware\Admin;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +19,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
+
 Route::get('/home', 'HomeController@index')->name('home');
-// Route::get('/admin', 'AdminController@index')->name('admin')->middleware('admin');
-// Route::get('/user', 'UserController@index')->name('user')->middleware('user');
+Route::get('/admin', 'AdminController@index')->name('admin')->middleware('auth','admin');
+Route::get('/user', 'UserController@index')->name('user')->middleware('auth','tolluser');
