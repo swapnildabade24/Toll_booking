@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
-use App\Http\Controllers\Auth;
+use Auth;
 
 use Closure;
 
