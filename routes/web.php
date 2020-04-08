@@ -21,5 +21,16 @@ Auth::routes();
 
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/admin', 'AdminController@index')->name('admin')->middleware('auth','admin');
-Route::get('/user', 'UserController@index')->name('user')->middleware('auth','tolluser');
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::group(['prefix' => 'admin'], function () {
+        Route::get('/', 'AdminController@index')->name('admin')->middleware('admin');
+        Route::get('/road', 'RoadController@index')->name('road')->middleware('admin');
+        Route::get('/toll', 'TollController@index')->name('admin/toll')->middleware('admin');
+    });
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/', 'UserController@index')->name('user')->middleware('tolluser');
+    });
+});
+
+
