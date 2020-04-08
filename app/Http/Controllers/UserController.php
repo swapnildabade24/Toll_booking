@@ -18,7 +18,12 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {    //die;
+    {    
         return view('user.home');
+    }
+
+    public function userList()
+    {    
+        return view('admin.userList');
     }
 }

@@ -204,7 +204,7 @@
               </a>
             </li> 
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('userlist') }}" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
                   Users 
@@ -213,7 +213,7 @@
               </a>
             </li> 
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('admin/bookinglist') }}" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
                   Users bookings 

@@ -27,6 +27,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', 'AdminController@index')->name('admin')->middleware('admin');
         Route::get('/road', 'RoadController@index')->name('road')->middleware('admin');
         Route::get('/toll', 'TollController@index')->name('admin/toll')->middleware('admin');
+        Route::get('/bookinglist', 'TollBookingController@index')->name('admin/bookinglist')->middleware('admin');
+        Route::get('/userlist', 'UserController@userList')->name('userlist')->middleware('admin');
     });
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', 'UserController@index')->name('user')->middleware('tolluser');
