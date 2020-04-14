@@ -184,7 +184,7 @@
               <a href="{{ route('admin/toll') }}" class="nav-link">
             @endif
             @if (Auth::user()->role_id == 2)
-              <a href="#" class="nav-link">
+              <a href="{{ route('tollbooking') }}" class="nav-link">
             @endif
                 <i class="nav-icon fas fa-th"></i>
                 <p>

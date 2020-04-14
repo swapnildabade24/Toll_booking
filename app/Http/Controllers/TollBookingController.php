@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use App\TollBooking;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,12 @@ class TollBookingController extends Controller
      */
     public function index()
     {
-        return view('admin.bookinglist');
+        if (Auth::user()->role_id == 1 ) {
+            return view('admin.bookinglist');
+        }
+        if (Auth::user()->role_id == 2) {
+            return view('user.toll');
+        }
     }
 
     /**

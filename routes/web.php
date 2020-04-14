@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', 'UserController@index')->name('user')->middleware('tolluser');
+        Route::get('/tollbooking', 'TollBookingController@index')->name('tollbooking')->middleware('tolluser');
     });
 });
 
