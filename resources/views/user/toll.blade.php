@@ -34,7 +34,19 @@
                     <div class="col-lg-6">
                       <p id="total_toll_cost"></p>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-12">
+                      <table class="table table-condensed" id="toll_list">
+                        <thead>
+                          <tr>                                        
+                            <th style="border: 0">Toll Name</th>
+                            <th style="border: 0">Road Name</th>
+                            <th style="border: 0">Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                      </table>
                     </div>
                     <div class="col-lg-6">
                     </div>
@@ -85,29 +97,29 @@
 
           var jsonData = {
             "from": {
-                    	"address": from
-                  },
-                  "to": {
-                    	"address": to
-                  },
-                  "waypoints": [
-                    	{ "address": from },
-                    	{ "address": to}
-                  ],
-                  "vehicleType": "2AxlesAuto",
-                  "fuelPrice": "2.79",
-                  "fuelPriceCurrency": "USD",
-                  "fuelEfficiency": {
-                    	"city": 24,
-                    	"hwy": 30,
-                    	"units": "mpg"
-                  },
-                  "departure_time": 1551541566,
-                  "driver": {
-                    	"wage": 30,
-                    	"rounding": 15,
-                    	"valueOfTime": 0
-                  }
+              	"address": from
+            },
+            "to": {
+              	"address": to
+            },
+            "waypoints": [
+              	{ "address": from },
+              	{ "address": to}
+            ],
+            "vehicleType": "2AxlesAuto",
+            "fuelPrice": "2.79",
+            "fuelPriceCurrency": "USD",
+            "fuelEfficiency": {
+              	"city": 24,
+              	"hwy": 30,
+              	"units": "mpg"
+            },
+            "departure_time": 1551541566,
+            "driver": {
+              	"wage": 30,
+              	"rounding": 15,
+              	"valueOfTime": 0
+            }
           };
 
           $.ajaxSetup({
@@ -130,6 +142,27 @@
                 console.log(response.routes[0].costs.cash);
                 document.getElementById("toll_count").innerHTML = 'Totol Toll Count: '+response.routes[0].tolls.length;
                 document.getElementById("total_toll_cost").innerHTML = 'Totol Toll Cost: Rs '+response.routes[0].costs.cash;
+                let html = ``;
+                if(response.routes[0].tolls.length > 0) {
+                    for(let i in response.routes[0].tolls) {
+                        let tmp = response.routes[0].tolls[i];
+                        html +=`<tr>
+                                    @if(`+!tmp.name+`)
+                                      <td>`+tmp.start.name+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                    @else
+                                      <td>`+tmp.name+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                    @endif
+                                    @if(`+!tmp.road+`)
+                                      <td>`+tmp.start.road+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                    @else
+                                      <td>`+tmp.road+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                    @endif
+                                    <td>`+tmp.oneWay+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                </tr>`;
+                    }
+                }
+                $("#toll_list tbody").html(html);
+                // $('.pending-schedules-count').html(results.collections.length);
               },
               error: function (error) {
                 console.log(error);

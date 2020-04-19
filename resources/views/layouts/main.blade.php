@@ -224,7 +224,7 @@
           @endif
           @if (Auth::user()->role_id == 2)
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('vehicle') }}" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
                   Vehicle 
