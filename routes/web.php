@@ -33,6 +33,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', 'UserController@index')->name('user')->middleware('tolluser');
         Route::get('/tollbooking', 'TollBookingController@index')->name('tollbooking')->middleware('tolluser');
+        Route::post('/tollbooking-ajax', 'TollBookingController@store')->name('tollbooking-ajax')->middleware('tolluser');
         Route::get('/vehicle', 'VehicleController@index')->name('vehicle')->middleware('tolluser');
     });
 });

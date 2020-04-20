@@ -90,14 +90,14 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <!-- select -->
-                      <div class="form-group">
-                        <label>Vehicle Type</label>
-                        <select class="form-control">
-                          <option value="2AxlesAuto">Car/ Jeep/ Van</option>
-                          <option value="2AxlesMoto">Bike</option>
-                          <option value="2AxlesLCV">Pickup truck/ Light commercial vehicles</option>
-                        </select>
-                      </div>
+                            <div class="form-group">
+                                <label>Vehicle Type</label>
+                                <select class="form-control">
+                                    <option value="2AxlesAuto">Car/ Jeep/ Van</option>
+                                    <option value="2AxlesMoto">Bike</option>
+                                    <option value="2AxlesLCV">Pickup truck/ Light commercial vehicles</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

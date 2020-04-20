@@ -41,7 +41,7 @@ class TollBookingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $request;
     }
 
     /**
