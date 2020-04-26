@@ -15,6 +15,11 @@ class CreateTollsTable extends Migration
     {
         Schema::create('tolls', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('name');
+            $table->biginteger('road_id')->unsigned();
+            $table->foreign('road_id')->references('id')->on('roads');
+            $table->string('toll_lat');
+            $table->string('toll_lng');
             $table->timestamps();
         });
     }

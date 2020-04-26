@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use LaravelQRCode\Facades\QRCode;
 
 class BookingConformation extends Notification
 {
@@ -40,10 +41,17 @@ class BookingConformation extends Notification
      */
     public function toMail($notifiable)
     {
+        // $pngImage = QrCode::format('png')->merge('ss.png', 0.3, true)
+        //                 ->size(500)->errorCorrection('H')
+        //                 ->generate('Welcome to kerneldev.com!');
+        // $pngImage = QrCode::backgroundColor(255, 255, 0)->color(255, 0, 127)
+        // ->size(500)->generate('Welcome to Toll Booking');
         return (new MailMessage)
+                    ->line('Welcome to Toll Booking')
+                    ->line('qr')
                     ->line('The introduction to the notification.')
                     ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                    ->line('Thank you for using our Toll Booking!');
     }
 
     /**

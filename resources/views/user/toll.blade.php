@@ -12,9 +12,11 @@
                 <h3 class="card-title">Book Toll</h3>
               </div>
               <!-- /.card-header -->
+              {{-- {!! QrCode::generate('Welcome to kerneldev.com!'); !!} --}}
               <!-- form start -->
-              <form role="form" id="toll_booking_form" autocomplete="off">
-                <div class="card-body">
+              {{-- <form role="form" id="toll_booking_form" autocomplete="off" > --}}
+              <form role="form" id="toll_booking_form" method="post" action="{{ url('user/tollbooking-ajax') }}" autocomplete="off" target="_blank">
+              <div class="card-body">
                   <div class="row">
                     <div class="col-lg-6">
                       <div class="form-group">
@@ -32,7 +34,7 @@
                     <div class="col-lg-4">
                       <div class="form-group">
                           <label for="Source">Vehicle Number</label>
-                          <input type="text" class="form-control" name="vehicle_numnber" id="search_input_1" value = "" placeholder="Vehicle Number">
+                          <input type="text" class="form-control" name="vehicle_number" id="search_input_1" value = "" placeholder="Vehicle Number">
                       </div>
                     </div>
                     <div class="col-lg-4">
@@ -57,7 +59,7 @@
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                           </div>
-                          <input type="text" id="journey_date" name="journey_date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                          <input type="text" id="datepicker" name="journey_date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                         </div>
                         <!-- /.input group -->
                       </div>
@@ -105,36 +107,45 @@
         </div>
     </div><!-- /.container-fluid -->
   </section>
+  
+@endsection
+@section('script_content')
 
     <!-- Google Maps JavaScript library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyCdGv5cjpA0dMUCSolCf89tl_vgccGvsu0"></script>
 
     <script>
-        var searchInput_1 = 'search_input_1';
-        var searchInput_2 = 'search_input_2';
+        var source = 'search_input_1';
+        var destination = 'search_input_2';
+
+        var toll_name = [];
+        var road_name = [];
+        var toll_price = [];
 
         $(document).ready(function () {
           // alert('hello');
-
+          // $("select.vehicle_type").change(function(){
+          //   var vehicle_type = $(this).children("option:selected").val();
+          //   alert("You have selected the country - " + vehicle_type);
+          // });
             var autocomplete_1;
             var autocomplete_2;
-            autocomplete_1 = new google.maps.places.Autocomplete((document.getElementById(searchInput_1)), {
+            autocomplete_1 = new google.maps.places.Autocomplete((document.getElementById(source)), {
                 types: ['geocode'],
             });
-            autocomplete_2 = new google.maps.places.Autocomplete((document.getElementById(searchInput_2)), {
+            autocomplete_2 = new google.maps.places.Autocomplete((document.getElementById(destination)), {
                 types: ['geocode'],
             });
         });
 
+        // $("#get_toll_info").click(function(event){
         function get_toll_info(event) {
           
           // event.preventDefault();
-
-          var from = document.getElementById(searchInput_1).value;
-          var to = document.getElementById(searchInput_2).value;
-          // var vehicle_type = document.getElementById(vehicle_type).value;
-
+          var from = document.getElementById(source).value;
+          var to = document.getElementById(destination).value;
+          var vehicle_type = $('#vehicle_type :selected').val();
           var jsonData = {
             "from": {
               	"address": from
@@ -146,7 +157,7 @@
               	{ "address": from },
               	{ "address": to}
             ],
-            "vehicleType": "2AxlesAuto",
+            "vehicleType": vehicle_type,
             "fuelPrice": "2.79",
             "fuelPriceCurrency": "USD",
             "fuelEfficiency": {
@@ -180,28 +191,54 @@
               },
               success: function (response) {
                 console.log(response.routes[0].costs.cash);
-                document.getElementById("toll_count").innerHTML = 'Totol Toll Count: '+response.routes[0].tolls.length;
-                document.getElementById("total_toll_cost").innerHTML = 'Totol Toll Cost: Rs '+response.routes[0].costs.cash;
+                document.getElementById("toll_count").innerHTML = '<input  name="toll_count" value="'+response.routes[0].tolls.length+'" type="hidden">Totol Toll Count: '+response.routes[0].tolls.length;
+                document.getElementById("total_toll_cost").innerHTML = '<input  name="total_toll_cost" value="'+response.routes[0].costs.cash+'" type="hidden">Totol Toll Cost: Rs '+response.routes[0].costs.cash;
                 let html = ``;
                 if(response.routes[0].tolls.length > 0) {
                     for(let i in response.routes[0].tolls) {
                         let tmp = response.routes[0].tolls[i];
+                                    if (!tmp.name) {
+                                      toll_name[i] = tmp.start.name;
+                                    }else{
+                                      toll_name[i] = tmp.name;
+                                    }
+                                    if (!tmp.road) {
+                                      road_name[i] = tmp.start.road;
+                                    }else{
+                                      road_name[i] = tmp.road;
+                                    }
+                                    toll_price[i] = tmp.oneWay;
+                                    
+                                    // @if(`+!tmp.name+`)
+                                    //   <td>`+tmp.start.name+`</td>
+                                    // @else
+                                    //   <td>`+tmp.name+`</td>
+                                    // @endif
+                                    // @if(`+!tmp.road+`)
+                                    //   <td>`+tmp.start.road+`</td>
+                                    // @else
+                                    //   <td>`+tmp.road+`</td>
+                                    // @endif
+                                    // <td>`+tmp.oneWay+`</td>
                         html +=`<tr>
-                                    @if(`+!tmp.name+`)
-                                      <td>`+tmp.start.name+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                @if(`+!tmp.name+`)
+                                      <td>`+tmp.start.name+` <input  name="toll_name[]" value="`+tmp.start.name+`" type="hidden"> </td>
                                     @else
-                                      <td>`+tmp.name+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                      <td>`+tmp.name+` <input  name="toll_name[]" value="`+tmp.name+`" type="hidden">  </td>
                                     @endif
                                     @if(`+!tmp.road+`)
-                                      <td>`+tmp.start.road+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                      <td>`+tmp.start.road+` <input  name="road_name[]" value="`+tmp.start.road+`" type="hidden"> </td>
                                     @else
-                                      <td>`+tmp.road+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                      <td>`+tmp.road+` <input  name="road_name[]" value="`+tmp.road+`" type="hidden"> </td>
                                     @endif
-                                    <td>`+tmp.oneWay+` <abbr title="#"><i class="fas fa-info-circle"></i></abbr></td>
+                                    <td>`+tmp.oneWay+` <input  name="toll_price[]" value="`+tmp.oneWay+`" type="hidden"> </td>
                                 </tr>`;
                     }
                 }
                 $("#toll_list tbody").html(html);
+                // alert(toll_name);
+                // alert(road_name);
+                // alert(toll_price);
                 // $('.pending-schedules-count').html(results.collections.length);
               },
               error: function (error) {
@@ -217,10 +254,25 @@
         // });
 
 
-        $("#toll_booking_form").submit(function (event) {  
+        $("#toll_booing_form").submit(function (event) {  
           
           event.preventDefault();
-          var formData = new FormData(this);
+          // var form = $('#toll_booking_form')[0];
+          var formData = $('#toll_booking_form').serializeArray();
+          var indexed_array = {};
+
+          $.map(formData, function(n, i){
+              indexed_array[n['name']] = n['value'];
+          });                   
+          // var formData = new FormData(this);
+          console.log(indexed_array);
+          var source = $('#search_input_1').val(); 
+          // var destination = $('#search_input_2').val(); 
+          // var vehicle_number = $('#vehicle_number').val(); 
+          // var vehicle_type_value = $('#vehicle_type :selected').val(); 
+          // var vehicle_type_text = $('#vehicle_type :selected').text(); 
+          // var journey_date = $('#journey_date').val(); 
+          // // alert(formData);
 
           $.ajaxSetup({
             headers: {
@@ -228,129 +280,92 @@
             }
           }); 
 
-          jQuery.ajax({
-              type: "POST",
-              url: "tollbooking-ajax",
-              dataType: "json",
-              async: 'true',
-              cache: false,
-              contentType: false,
-              processData: false,
-              data: formData,
-              beforeSend: function() {
-                $(".loading").show();
-              },
-              success: function (response) {
+          // jQuery.ajax({
+          //     type: "POST",
+          //     url: "{{ route('tollbooking-ajax') }}",
+          //     dataType: "json",
+          //     async: 'true',
+          //     cache: false,
+          //     contentType: false,
+          //     processData: false,
+          //     data: formData,
+          //     {
+          //     //   formData,
+          //       // source : source,
+          //     //   destination  : destination,
+          //     //   vehicle_number : vehicle_number,
+          //     //   vehicle_type_value : vehicle_type_value,
+          //     //   vehicle_type_text :vehicle_type_text,
+          //     //   vehicle_type_text : journey_date,
+          //     //   toll_name,  
+          //     //   road_name,
+          //     //   toll_price,
 
-              },
-              error: function (error) {
-                console.log(error);
-              },
-              complete: function() {
-                  $(".loading").hide();
-              }
-          });
+          //     },
+          //     beforeSend: function() {
+          //       $(".loading").show();
+          //     },
+          //     success: function (response) {
+          //       console.log(response);
+          //     },
+          //     error: function (error) {
+          //       console.log(error);
+          //     },
+          //     complete: function() {
+          //         $(".loading").hide();
+          //     }
+          // });
+
+          $.ajax({
+                method: "POST",
+                url: "{{ route('tollbooking-ajax') }}",
+                dataType: "json",
+                async: 'true',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: indexed_array,
+                // data: {source : source},
+                beforeSend: function() {
+                    $(".loading").show();
+                },
+                success: function (response) {
+                    if(response.success)
+                    {
+                        console.log(response);
+                    }
+                    else
+                    {
+                        console.log(response);
+                        // toastr.error(response.error);
+                    }
+                    $(".loading").hide();
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+                complete: function() {
+                    $(".loading").hide();
+                }
+            });
+
           return false;
         });
 
 
     </script>
-    <!-- InputMask -->
-    <script src="{{ asset('plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
+  <!-- bootstrap datepicker -->
+<script src="{{ asset('bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+<script>
 
-    <!-- jQuery -->
-    <script src="{{('plugins/jquery/jquery.min.js') }}"></script>
-    <!-- Bootstrap 4 -->
-    <script src="{{('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- Select2 -->
-    <script src="{{ ('plugins/select2/js/select2.full.min.js') }}"></script>
-    <!-- Bootstrap4 Duallistbox -->
-    <script src="{{ ('plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') }}"></script>
-    <!-- InputMask -->
-    <script src="{{('plugins/moment/moment.min.js') }}"></script>
-    <script src="{{('plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
-    <!-- date-range-picker -->
-    <script src="{{('plugins/daterangepicker/daterangepicker.js') }}"></script>
-    <!-- bootstrap color picker -->
-    <script src="{{('plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') }}"></script>
-    <!-- Tempusdominus Bootstrap 4 -->
-    <script src="{{('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-    <!-- Bootstrap Switch -->
-    <script src="{{('plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
-    <!-- AdminLTE App -->
-    <script src="{{('dist/js/adminlte.min.js')}}"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="{{('dist/js/demo.js')}}"></script>
-    <!-- Page script -->
+  //Date picker
+  $('#datepicker').datepicker({
+    autoclose: true
+  })
 
-    <script>
-      $(function () {
-        //Initialize Select2 Elements
-        $('.select2').select2()
+</script>
+
     
-        //Initialize Select2 Elements
-        $('.select2bs4').select2({
-          theme: 'bootstrap4'
-        })
+
     
-        //Datemask dd/mm/yyyy
-        $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
-        //Datemask2 mm/dd/yyyy
-        $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
-        //Money Euro
-        $('[data-mask]').inputmask()
-    
-        //Date range picker
-        $('#reservation').daterangepicker()
-        //Date range picker with time picker
-        $('#reservationtime').daterangepicker({
-          timePicker: true,
-          timePickerIncrement: 30,
-          locale: {
-            format: 'MM/DD/YYYY hh:mm A'
-          }
-        })
-        //Date range as a button
-        $('#daterange-btn').daterangepicker(
-          {
-            ranges   : {
-              'Today'       : [moment(), moment()],
-              'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-              'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
-              'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-              'This Month'  : [moment().startOf('month'), moment().endOf('month')],
-              'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
-            startDate: moment().subtract(29, 'days'),
-            endDate  : moment()
-          },
-          function (start, end) {
-            $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
-          }
-        )
-    
-        //Timepicker
-        $('#timepicker').datetimepicker({
-          format: 'LT'
-        })
-        
-        //Bootstrap Duallistbox
-        $('.duallistbox').bootstrapDualListbox()
-    
-        //Colorpicker
-        $('.my-colorpicker1').colorpicker()
-        //color picker with addon
-        $('.my-colorpicker2').colorpicker()
-    
-        $('.my-colorpicker2').on('colorpickerChange', function(event) {
-          $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
-        });
-    
-        $("input[data-bootstrap-switch]").each(function(){
-          $(this).bootstrapSwitch('state', $(this).prop('checked'));
-        });
-    
-      })
-    </script>
 @endsection

@@ -27,10 +27,15 @@
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
+  <!-- bootstrap datepicker admin lte 2 --> 
+  <link rel="stylesheet" href="{{ asset('bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css')}}">
+
+  <link href="{{ asset('') }}assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+
 
   <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-  
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -172,7 +177,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="#" class="d-block">{{ Auth::user()->name }}</a>
@@ -218,7 +223,7 @@
               </a>
             </li> 
             <li class="nav-item">
-              <a href="{{ route('admin/bookinglist') }}" class="nav-link">
+              <a href="{{ route('bookinglist') }}" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
                   Users bookings 
@@ -238,7 +243,7 @@
               </a>
             </li> 
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('booking-history') }}" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
                   History 
@@ -341,5 +346,6 @@
 <script src="{{ asset('dist/js/pages/dashboard.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('dist/js/demo.js')}}"></script>
+@yield('script_content')
 </body>
 </html>
