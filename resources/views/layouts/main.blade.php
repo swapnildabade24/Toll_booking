@@ -320,6 +320,9 @@
 <script>
   $.widget.bridge('uibutton', $.ui.button)
 </script>
+
+@yield('script_content')
+
 <!-- Bootstrap 4 -->
 <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <!-- ChartJS -->
@@ -346,6 +349,6 @@
 <script src="{{ asset('dist/js/pages/dashboard.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('dist/js/demo.js')}}"></script>
-@yield('script_content')
+<script src="{{ asset('') }}assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
 </body>
 </html>

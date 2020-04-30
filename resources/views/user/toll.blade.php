@@ -12,7 +12,7 @@
                 <h3 class="card-title">Book Toll</h3>
               </div>
               <!-- /.card-header -->
-              {{-- {!! QrCode::generate('Welcome to kerneldev.com!'); !!} --}}
+              
               <!-- form start -->
               {{-- <form role="form" id="toll_booking_form" autocomplete="off" > --}}
               <form role="form" id="toll_booking_form" method="post" action="{{ url('user/tollbooking-ajax') }}" autocomplete="off" target="_blank">

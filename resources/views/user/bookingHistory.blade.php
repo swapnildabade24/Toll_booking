@@ -9,6 +9,7 @@
             <div class="card">
                 <div class="card-header">
                   <h3 class="card-title">Booking List</h3>
+                  
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -51,6 +52,30 @@
           <!--/.col (left) -->
         </div>
     </div><!-- /.container-fluid -->
+
+    <div class="modal fade" data-toggle="modal" id="modalDefault">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Default Modal</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="div_qr_print" id="show_qr"></div>
+            {{-- {!! QrCode::size(250)->generate('Welcome to kerneldev.com!'); !!} --}}
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
   </section>
 
   @endsection
@@ -60,7 +85,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css"> --}}
   {{-- <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script> --}}
-  <script src="{{ asset('') }}assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
+  {{-- <script src="{{ asset('') }}assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script> --}}
+  
+  {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> --}}
   <script>
     var item_table;
     // $(document).ready(function () {
@@ -98,12 +125,26 @@
                 orderable: false,
                 render: function(data, type, row, meta) {
                     let html = `
-                            <input type="hidden" class="user_id" value="`+row.id+`">
-                            <button onclick="planning('`+row.id+`')" class="btn btn-outline-info btn-sm" type="button"><i class="fas fa-edit"></i> Expand </button>`;
+                            <button onclick="barcode_popup('`+row.source+`,`+row.destination+`,`+row.journey_date+`,`+row.toll_names+`')" class="btn btn-outline-info btn-sm" type="button"><i class="fas fa-qrcode"></i> Expand </button>`;
                     return html;
                 }
             }]
         });
     })
+
+    function barcode_popup(source, destination, journey_date, toll_names) {
+      let html = ``;
+
+      var source =  source;
+      // debugger
+      // console.log(source);
+      // console.log(destination);
+      // console.log(toll_names);
+      html +=`<img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->merge('https://www.w3adda.com/wp-content/uploads/2019/07/laravel.png', 0.3, true)
+                        ->size(200)->errorCorrection('H')
+                        ->generate('`+source+`')) !!} ">`;
+      $("#show_qr").html(html);
+      $("#modalDefault").modal('show');
+    }
   </script>
 @endsection

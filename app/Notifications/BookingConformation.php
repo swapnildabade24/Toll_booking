@@ -17,9 +17,13 @@ class BookingConformation extends Notification
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data)
     {
-        //
+        $this->vehicle_number = $data[0];
+        $this->source = $data[1];
+        $this->destination = $data[2];
+        $this->journey_date = $data[3];
+        $this->cost = $data[4];
     }
 
     /**
@@ -47,10 +51,13 @@ class BookingConformation extends Notification
         // $pngImage = QrCode::backgroundColor(255, 255, 0)->color(255, 0, 127)
         // ->size(500)->generate('Welcome to Toll Booking');
         return (new MailMessage)
-                    ->line('Welcome to Toll Booking')
-                    ->line('qr')
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->line('Your booking is confromed')
+                    ->line('Vehicle Number: ' .$this->vehicle_number)
+                    ->line('Source: ' .$this->source)
+                    ->line('Destination: ' .$this->destination)
+                    ->line('Journey Date: ' .$this->journey_date)
+                    ->line('Total Price: '.$this->cost)
+                    ->action('Go to Toll Booking', url('/'))
                     ->line('Thank you for using our Toll Booking!');
     }
 

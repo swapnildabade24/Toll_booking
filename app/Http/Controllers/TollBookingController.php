@@ -105,10 +105,12 @@ class TollBookingController extends Controller
         // ->size(500)->generate('Welcome to kerneldev.com!');
         
         // Mail
+
+        $data = array($request->vehicle_number."","".$request->source."","".$request->destination."","".$request->journey_date."","".$request->total_toll_cost);
         
         $user = new User();
         $user->email = Auth::user()->email;   // This is the email you want to send to.
-        $user->notify(new BookingConformation()); 
+        $user->notify(new BookingConformation($data)); 
 
         return view('user.bookingHistory');   
     }
