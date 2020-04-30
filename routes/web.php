@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
         // Route::view('/userlist', 'admin/userList')->name('bookinglist')->middleware('admin');
         // Route::post('/bookinglist-ajax', 'TollBookingController@show')->name('bookinglist-ajax')->middleware('admin');
         Route::get('/userlist', 'UserController@userList')->name('userlist')->middleware('admin');
+        Route::post('/userlistajax', 'userController@userListajax')->name('userlist-ajax')->middleware('admin');
     });
     Route::group(['prefix' => 'user'], function () {
         Route::get('/', 'UserController@index')->name('user')->middleware('tolluser');
